@@ -611,12 +611,10 @@ Financial Health Benchmark: {stock_info.get('sector','-')}</span></div>
     st.markdown("""<div style="font-size:15px; font-weight:bold; color:#F8FAFC; letter-spacing:0.5px; margin-bottom:8px;">
 7 DIMENSIONS OVERVIEW <span style="font-size:14.5px; color:#94A3B8; font-weight:normal; margin-left:6px;">ผลการประเมินสุขภาพทางการเงินในแต่ละมิติ (คำนวณจากอัตราส่วนจริง)</span></div>""", unsafe_allow_html=True)
 
-     latest_fin_row = fin_stock.iloc[-1] if not fin_stock.empty else pd.Series(dtype=float)
+    latest_fin_row = fin_stock.iloc[-1] if not fin_stock.empty else pd.Series(dtype=float)
     ocf_ni = safe(latest_fin_row.get('ocf_to_ni'), 1.0)
     int_cov = safe(latest_fin_row.get('interest_coverage'), 5.0)
     rev_growth = safe(stock_info.get('revenue_growth_yoy'), 0.0)
-    # Asset Turnover (Revenue / Total Assets) - วัดประสิทธิภาพการใช้สินทรัพย์สร้างรายได้ตามหลัก DuPont
-    # แยกจาก ROA โดยเจตนา เพื่อไม่ให้ซ้ำกับมิติ Profitability ที่ใช้ ROA ไปแล้ว
     _rev = safe(latest_fin_row.get('total_revenue'), 0.0)
     _assets = safe(latest_fin_row.get('total_assets'), 0.0)
     asset_turnover = (_rev / _assets) if _assets > 0 else 0.0
@@ -628,7 +626,6 @@ Financial Health Benchmark: {stock_info.get('sector','-')}</span></div>
     dim_cashflow = int(round(np.clip(50 + ocf_ni * 5, 0, 100)))
     dim_efficiency = int(round(np.clip(asset_turnover * 45, 0, 100)))
     dim_earnings = int(round(np.clip(50 + int_cov * 0.3, 0, 100)))
-
     def label_for(score):
         if score >= 75: return "EXCELLENT"
         if score >= 55: return "GOOD"
